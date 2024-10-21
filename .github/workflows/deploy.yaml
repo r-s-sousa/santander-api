@@ -71,7 +71,7 @@ jobs:
           
           for INSTANCE_ID in $INSTANCE_IDS; do
             echo "Updating instance $INSTANCE_ID..."
-            ssh -o StrictHostKeyChecking=no -i "ec2_key.pem" ec2-user@$INSTANCE_ID << 'EOF'
+            ssh -o StrictHostKeyChecking=no -i "ec2_key.pem" ec2-user@$INSTANCE_ID << EOF
               ./setup.sh
               docker pull $IMAGE_URI
               docker stop address_api || true
