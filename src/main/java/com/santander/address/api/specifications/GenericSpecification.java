@@ -149,9 +149,7 @@ public class GenericSpecification<T> implements Specification<T> {
         if (processInteger(filterItem, value, path)) return true;
         if (processLong(filterItem, value, path)) return true;
         if (processFloat(filterItem, value, path)) return true;
-        if (processDouble(filterItem, value, path)) return true;
-
-        return false;
+        return processDouble(filterItem, value, path);
     }
 
     protected boolean processDouble(FilterItem filterItem, String value, Path path) {
