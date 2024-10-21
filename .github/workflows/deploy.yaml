@@ -59,27 +59,35 @@ jobs:
 
       - name: Update EC2 instances
         run: |
-          INSTANCE_IDS=$(aws ec2 describe-instances --filters "Name=tag:Category,Values=application" "Name=tag:Name,Values=java-app-instance*" --query "Reservations[*].Instances[*].InstanceId" --output text)
-          
-          echo "Instance IDs: $INSTANCE_IDS"
+          INSTANCE_INFO=$(aws ec2 describe-instances --filters "Name=tag:Category,Values=application" "Name=tag:Name,Values=java-app-instance*" --query "Reservations[*].Instances[*].[InstanceId,PublicIpAddress]" --output text)
+
+          echo "Instance info: $INSTANCE_IDS"
 
           IMAGE_URI="${{ steps.docker.outputs.image }}"
           
-          echo "IMAGE_URI: $INSTANCE_IDS"
+          echo "IMAGE_URI: $IMAGE_URI"
           
           echo "${{ secrets.EC2_SSH_KEY_PEM }}" > ec2_key.pem
           
-          chmod 600 ec2_key.pem
+          chmod 600 ec2.pem
+          
+          while read -r INSTANCE_ID PUBLIC_IP; do
+            if [[ -n "$PUBLIC_IP" ]]; then  # Ensure PUBLIC_IP is not empty
+              echo "Updating instance $INSTANCE_ID with IP $PUBLIC_IP..."
+              ssh -o StrictHostKeyChecking=no -i "ec2.pem" ec2-user@$PUBLIC_IP << EOF
+              echo 'Running setup script on instance $INSTANCE_ID...'
+              ./setup.sh
+              echo 'Pulling image: $IMAGE_URI'
+              docker pull $IMAGE_URI
+              echo 'Stopping and removing old container...'
+              docker stop address_api || true
+              docker rm address_api || true
+              echo 'Running new container...'
+              docker run --name address_api -d -p 8080:8080 $IMAGE_URI
+          EOF
+            else
+              echo "No public IP found for instance $INSTANCE_ID. Skipping..."
+            fi
+          done <<< "$INSTANCE_INFO"
           
           rm ec2_key.pem
-          
-#          for INSTANCE_ID in $INSTANCE_IDS; do
-#            echo "Updating instance $INSTANCE_ID..."
-#            ssh -o StrictHostKeyChecking=no -i "ec2_key.pem" ec2-user@$INSTANCE_ID << EOF
-#              ./setup.sh
-#              docker pull $IMAGE_URI
-#              docker stop address_api || true
-#              docker rm address_api || true
-#              docker run --name address_api -d -p 8080:8080 $IMAGE_URI
-#            EOF
-#          done
