@@ -4,11 +4,11 @@ WORKDIR /app
 
 COPY build.gradle.kts settings.gradle.kts gradlew ./
 COPY gradle ./gradle
-
-RUN ./gradlew build --no-daemon --parallel || return 0
-
 COPY src ./src
-RUN ./gradlew build --no-daemon --parallel
+
+RUN chmod +x gradlew
+
+RUN ./gradlew build
 
 FROM amazoncorretto:21-alpine-jdk
 
