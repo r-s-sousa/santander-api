@@ -16,6 +16,6 @@ jobs:
     secrets: inherit
     uses: ./.github/workflows/deploy.yaml
     with:
-      application-name: address-api
+      application-name: address-service
       aws-account-id: 746669201677
       environment: development
