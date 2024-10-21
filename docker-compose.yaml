@@ -1,0 +1,57 @@
+services:
+
+  postgresql:
+    container_name: address-api-postgresql
+    environment:
+      - POSTGRES_DB=address-api
+      - POSTGRES_PASSWORD=address-api
+      - POSTGRES_USER=address-api
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    volumes:
+      - address-api-postgresql:/var/lib/postgresql/data
+    networks:
+      - address-api-network
+
+  redis:
+    container_name: address-api-redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - address-api-redis:/data
+    networks:
+      - address-api-network
+
+  api:
+    container_name: address-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgresql
+      - redis
+    environment:
+      - AWS_ELASTICACHE_REDIS_ENDPOINT=redis
+      - AWS_ELASTICACHE_REDIS_WITH_SSL=false
+      - ENVIRONMENT=development
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/address-api
+      - SPRING_DATASOURCE_USERNAME=address-api
+      - SPRING_DATASOURCE_PASSWORD=address-api
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+    networks:
+      - address-api-network
+
+volumes:
+  address-api-postgresql:
+    driver: local
+  address-api-redis:
+    driver: local
+
+networks:
+  address-api-network:
+    driver: bridge
