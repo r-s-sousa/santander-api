@@ -1,0 +1,21 @@
+name: Development
+
+on:
+  push:
+    branches: [development]
+
+permissions:
+  contents: read
+  id-token: write
+  pull-requests: write
+
+jobs:
+
+  continuous_integration:
+    name: Continuous Integration
+    secrets: inherit
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      application-name: address-api
+      aws-account-id: 746669201677
+      environment: development
