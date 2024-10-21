@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout source code
         uses: actions/checkout@v4
 
       - name: Configure AWS credentials
@@ -47,17 +47,20 @@ jobs:
         id: docker
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-          --build-arg AWS_ELASTICACHE_REDIS_ENDPOINT=${{ secrets.AWS_ELASTICACHE_REDIS_ENDPOINT }} \
-          --build-arg AWS_ELASTICACHE_REDIS_WITH_SSL="true" \
-          --build-arg ENVIRONMENT=${{ inputs.environment }} \
-          --build-arg POSTGRESQL_PASSWORD=${{ secrets.POSTGRESQL_PASSWORD }} \
-          --build-arg POSTGRESQL_URL=${{ secrets.POSTGRESQL_URL }} \
-          --build-arg POSTGRESQL_USERNAME=${{ secrets.POSTGRESQL_USERNAME }} .
+            --build-arg AWS_ELASTICACHE_REDIS_ENDPOINT=${{ secrets.AWS_ELASTICACHE_REDIS_ENDPOINT }} \
+            --build-arg AWS_ELASTICACHE_REDIS_WITH_SSL="true" \
+            --build-arg ENVIRONMENT=${{ inputs.environment }} \
+            --build-arg POSTGRESQL_PASSWORD=${{ secrets.POSTGRESQL_PASSWORD }} \
+            --build-arg POSTGRESQL_URL=${{ secrets.POSTGRESQL_URL }} \
+            --build-arg POSTGRESQL_USERNAME=${{ secrets.POSTGRESQL_USERNAME }} .
           
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          
+          # Output image details
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-#      - name: Deploy Amazon EC2 machines
+# Uncomment and adjust the section below if you need to deploy to EC2 or other services
+#      - name: Deploy to EC2 machines or ECS
 #        with:
 #          environment-variables: |
 #            ENVIRONMENT=${{ env.ENVIRONMENT }}
