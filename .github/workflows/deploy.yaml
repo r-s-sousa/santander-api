@@ -47,16 +47,14 @@ jobs:
         id: docker
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            --build-arg AWS_ELASTICACHE_REDIS_ENDPOINT=${{ secrets.AWS_ELASTICACHE_REDIS_ENDPOINT }} \
-            --build-arg AWS_ELASTICACHE_REDIS_WITH_SSL="true" \
-            --build-arg ENVIRONMENT=${{ inputs.environment }} \
-            --build-arg POSTGRESQL_PASSWORD=${{ secrets.POSTGRESQL_PASSWORD }} \
-            --build-arg POSTGRESQL_URL=${{ secrets.POSTGRESQL_URL }} \
-            --build-arg POSTGRESQL_USERNAME=${{ secrets.POSTGRESQL_USERNAME }} .
-          
+          --build-arg AWS_ELASTICACHE_REDIS_ENDPOINT=${{ secrets.AWS_ELASTICACHE_REDIS_ENDPOINT }} \
+          --build-arg AWS_ELASTICACHE_REDIS_WITH_SSL=true \
+          --build-arg ENVIRONMENT=${{ inputs.environment }} \
+          --build-arg POSTGRESQL_PASSWORD=${{ secrets.POSTGRESQL_PASSWORD }} \
+          --build-arg POSTGRESQL_URL=${{ secrets.POSTGRESQL_URL }} \
+          --build-arg POSTGRESQL_USERNAME=${{ secrets.POSTGRESQL_USERNAME }} .
+
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          
-          # Output image details
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
 # Uncomment and adjust the section below if you need to deploy to EC2 or other services
