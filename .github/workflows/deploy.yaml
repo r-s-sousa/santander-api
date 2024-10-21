@@ -57,9 +57,28 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-# Uncomment and adjust the section below if you need to deploy to EC2 or other services
-#      - name: Deploy to EC2 machines or ECS
-#        with:
-#          environment-variables: |
-#            ENVIRONMENT=${{ env.ENVIRONMENT }}
-#          image: ${{ steps.docker.outputs.image }}
+      - name: Update EC2 instances
+        run: |
+          INSTANCE_IDS=$(aws ec2 describe-instances \
+            --filters "Name=tag:Category,Values=application" "Name=tag:Name,Values=java-app-instance*" \
+            --query "Reservations[*].Instances[*].InstanceId" \
+            --output text)
+          
+          IMAGE_URI="${{ steps.docker.outputs.image }}"
+          
+          echo "${{ secrets.EC2_SSH_KEY_PEM }}" > ec2_key.pem
+          chmod 600 ec2_key.pem
+          
+          for INSTANCE_ID in "${INSTANCE_IDS[@]}"; do
+            echo "Updating instance $INSTANCE_ID..."
+            ssh -o StrictHostKeyChecking=no -i "ec2_key.pem" ec2-user@$INSTANCE_ID << 'EOF'
+              ./setup.sh
+              docker pull $IMAGE_URI
+              docker stop address_api || true
+              docker rm address_api || true
+              docker run --name address_api -d -p 8080:8080 $IMAGE_URI
+            EOF
+          done
+          
+          # Clean up the temporary PEM file
+          rm ec2_key.pem
