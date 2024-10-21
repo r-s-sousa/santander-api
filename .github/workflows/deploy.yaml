@@ -90,4 +90,4 @@ jobs:
             fi
           done <<< "$INSTANCE_INFO"
           
-          rm ec2_key.pem
+          rm ec2.pem
