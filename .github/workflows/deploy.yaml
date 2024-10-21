@@ -50,7 +50,7 @@ jobs:
           --build-arg AWS_ELASTICACHE_REDIS_ENDPOINT=${{ secrets.AWS_ELASTICACHE_REDIS_ENDPOINT }} \
           --build-arg AWS_ELASTICACHE_REDIS_WITH_SSL=true \
           --build-arg ENVIRONMENT=${{ inputs.environment }} \
-          --build-arg POSTGRESQL_PASSWORD=${{ secrets.POSTGRESQL_PASSWORD }} \
+          --build-arg POSTGRESQL_PASSWORD='${{ secrets.POSTGRESQL_PASSWORD }}' \
           --build-arg POSTGRESQL_URL=${{ secrets.POSTGRESQL_URL }} \
           --build-arg POSTGRESQL_USERNAME=${{ secrets.POSTGRESQL_USERNAME }} .
 
