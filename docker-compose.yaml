@@ -38,11 +38,9 @@ services:
       - AWS_ELASTICACHE_REDIS_ENDPOINT=redis
       - AWS_ELASTICACHE_REDIS_WITH_SSL=false
       - ENVIRONMENT=development
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/address-api
-      - SPRING_DATASOURCE_USERNAME=address-api
-      - SPRING_DATASOURCE_PASSWORD=address-api
-      - SPRING_REDIS_HOST=redis
-      - SPRING_REDIS_PORT=6379
+      - POSTGRESQL_URL=jdbc:postgresql://postgresql:5432/address-api
+      - POSTGRESQL_USERNAME=address-api
+      - POSTGRESQL_PASSWORD=address-api
     networks:
       - address-api-network
 
