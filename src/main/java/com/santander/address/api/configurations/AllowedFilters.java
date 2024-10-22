@@ -22,6 +22,14 @@ public class AllowedFilters {
         }
     }
 
+    public static List<AllowedFilter> zipCode() {
+        List<AllowedFilter> allowedFilters = new ArrayList<>();
+        DynamicFilter.addIdFilters(allowedFilters, false, "id");
+        DynamicFilter.addStringFilters(allowedFilters, false, "zipcode", "service_name", "request", "response");
+        DynamicFilter.addDateFilters(allowedFilters, false, "createdAt");
+        return allowedFilters;
+    }
+
     public static List<AllowedFilter> product() {
         List<AllowedFilter> allowedFilters = new ArrayList<>();
         DynamicFilter.addIdFilters(allowedFilters, false, "id");
