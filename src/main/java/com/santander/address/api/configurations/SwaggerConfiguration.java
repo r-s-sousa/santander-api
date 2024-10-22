@@ -25,7 +25,8 @@ public class SwaggerConfiguration {
                 .servers(
                         Arrays.asList(
                                 new Server().url("http://localhost:8080"),
-                                new Server().url("http://localhost:8081")
+                                new Server().url("http://localhost:8081"),
+                                new Server().url("http://address-service-development-alb-764033253.us-east-1.elb.amazonaws.com")
                         )
                 )
                 .components(
