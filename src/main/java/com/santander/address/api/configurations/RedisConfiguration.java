@@ -32,7 +32,7 @@ public class RedisConfiguration {
     @Bean
     @Primary
     public CacheManager cacheManager(final RedisConnectionFactory redisConnectionFactory) {
-        return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(RedisCacheConfiguration.defaultCacheConfig()).build();
+        return RedisCacheManager.builder(redisConnectionFactory).cacheDefaults(RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(1))).build();
     }
 
     @Bean

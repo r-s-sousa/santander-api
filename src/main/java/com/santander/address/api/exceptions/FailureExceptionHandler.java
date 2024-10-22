@@ -1,6 +1,5 @@
-package com.santander.address.api.handlers;
+package com.santander.address.api.exceptions;
 
-import com.santander.address.api.exceptions.*;
 import com.santander.address.api.responses.ErrorFieldResponse;
 import com.santander.address.api.responses.ErrorResponse;
 import com.santander.address.api.utils.Message;

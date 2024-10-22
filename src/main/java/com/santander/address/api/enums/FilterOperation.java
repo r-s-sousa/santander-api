@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum FilterOperation {
+
     EQUAL("eq"),
     NOT_EQUAL("neq"),
     GREATER_THAN("gt"),
